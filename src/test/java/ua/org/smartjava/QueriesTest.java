@@ -19,16 +19,21 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class QueriesTest {
+public class QueriesTest{
     private static final String NAME = "test1";
-    private EntityManager entityManager;
+    protected EntityManager entityManager;
 
     @Autowired
     EntityManagerFactory entityManagerFactory;
 
     @Before
-    public void init() {
+    public void initEntityManager() {
         entityManager = entityManagerFactory.createEntityManager();
+    }
+
+    @Before
+    public void init() {
+        entityManager.createQuery("DELETE from Employee");
         entityManager.getTransaction().begin();
         Employee employee = new Employee(1L);
         employee.setName(NAME);
