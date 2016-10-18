@@ -12,7 +12,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
 import ua.org.smartjava.domain.Employee;
-
+//TODO add profile for local mysql
 @SpringBootApplication
 public class SpringJpaAppApplication {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SpringJpaAppApplication.class);
