@@ -25,10 +25,19 @@ public class EmpTableTest extends BaseJpaTest {
             entityManager.getTransaction().commit();
         }
     }
+/*
+    allocationSize = 10; when count of objects increase the allocationSize valueColumnName in generator
+    table is incremented
+
+    ID: 8     GEN_VAL: 1
+    ID: 9     GEN_VAL: 2
+    ID: 289   GEN_VAL: 29
+    291 290   GEN_VAL: 30
+*/
 
     @Test
     public void test() {
-        final int entitiesCount = 10;
+        final int entitiesCount = 300;
         createData(entitiesCount);
         TypedQuery<EmpTable> query = entityManager.createQuery("SELECT e FROM EmpTable e", EmpTable.class);
         List<EmpTable> employeeList = query.getResultList();
