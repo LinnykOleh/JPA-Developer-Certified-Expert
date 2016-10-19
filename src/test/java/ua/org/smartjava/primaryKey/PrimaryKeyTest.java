@@ -16,9 +16,9 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-public class EmpTableTest extends BaseJpaTest {
+public class PrimaryKeyTest extends BaseJpaTest {
 
-    private void createData(int count) {
+    private void createDataTable(int count) {
         for (int i = 0; i < count; i++) {
             entityManager.getTransaction().begin();
             entityManager.persist(new EmpTable());
@@ -36,13 +36,43 @@ public class EmpTableTest extends BaseJpaTest {
 */
 
     @Test
-    public void test() {
+    public void testTableSequence() {
         final int entitiesCount = 300;
-        createData(entitiesCount);
+        createDataTable(entitiesCount);
         TypedQuery<EmpTable> query = entityManager.createQuery("SELECT e FROM EmpTable e", EmpTable.class);
         List<EmpTable> employeeList = query.getResultList();
         assertEquals(entitiesCount, employeeList.size());
         assertTrue(employeeList.get(entitiesCount - 1).getId() == entitiesCount);
+        //TODO add query to get value from SELECT * FROM `jpa-certificate`.ID_GEN;
+    }
+
+    private void createDataAuto(int count) {
+        for (int i = 0; i < count; i++) {
+            entityManager.getTransaction().begin();
+            EmpAuto employee = new EmpAuto();
+            entityManager.persist(employee);
+            entityManager.getTransaction().commit();
+        }
+    }
+
+    @Test
+    public void testAutoGeneration() {
+        final int entitiesCount = 10;
+        createDataAuto(entitiesCount);
+        TypedQuery<EmpAuto> query = entityManager.createQuery("SELECT e FROM EmpAuto e", EmpAuto.class);
+        List<EmpAuto> employeeList = query.getResultList();
+        assertEquals(entitiesCount, employeeList.size());
+        assertTrue(employeeList.get(entitiesCount - 1).getId() == entitiesCount);
+    }
+
+    @Test
+    public void testSequence() {
+//        not supported in MySql
+//        Oracle
+//        SQL Server 2012
+//        PostgreSQL
+//        DB2
+//        HSQLDB
     }
 
 }

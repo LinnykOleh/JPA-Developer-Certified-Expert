@@ -9,7 +9,8 @@ import javax.persistence.TableGenerator;
 @Entity
 public class EmpTable {
 
-    @TableGenerator(name = "EmpTableGenerator",
+    @TableGenerator(
+            name = "EmpTableGenerator",
             table = "ID_GEN",
             pkColumnName = "GEN_NAME",
             valueColumnName = "GEN_VAL",
