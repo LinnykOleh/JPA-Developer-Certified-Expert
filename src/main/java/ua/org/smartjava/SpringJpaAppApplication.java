@@ -7,6 +7,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -34,5 +35,10 @@ public class SpringJpaAppApplication {
 			LOGGER.info("Persisting the entity");
 			entityManager.persist(employee);
 		};
+	}
+
+	@Bean
+	public javax.validation.Validator localValidatorFactoryBean() {
+		return new LocalValidatorFactoryBean();
 	}
 }
