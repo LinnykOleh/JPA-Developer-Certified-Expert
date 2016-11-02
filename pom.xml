@@ -9,7 +9,7 @@
     <packaging>jar</packaging>
 
     <name>spring-jpa-app</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Project preparation for JPA certification.</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -23,6 +23,10 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
         <hibernate.version>5.2.3.Final</hibernate.version>
+        <lombok.version>1.16.10</lombok.version>
+        <mysql.version>6.0.5</mysql.version>
+        <javax.version>1.1.0.Final</javax.version>
+        <owasp.version>1.4.3</owasp.version>
     </properties>
 
     <dependencies>
@@ -33,7 +37,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.16.10</version>
+            <version>${lombok.version}</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -43,7 +47,7 @@
         <dependency>
             <groupId>mysql</groupId>
             <artifactId>mysql-connector-java</artifactId>
-            <version>6.0.5</version>
+            <version>${mysql.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -55,6 +59,12 @@
             <artifactId>hibernate-enhance-maven-plugin</artifactId>
             <version>${hibernate.version}</version>
         </dependency>
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>${javax.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -66,7 +76,7 @@
             <plugin>
                 <groupId>org.owasp</groupId>
                 <artifactId>dependency-check-maven</artifactId>
-                <version>1.4.3</version>
+                <version>${owasp.version}</version>
                 <executions>
                     <execution>
                         <goals>
