@@ -1,18 +1,22 @@
-package ua.org.smartjava.primaryKey;
+package ua.org.smartjava.domain.primaryKey;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
+@Getter @Setter
+@Builder
+@AllArgsConstructor
 public class EmpAuto {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Getter @Setter
     private long id;
 
     private String name;
@@ -20,7 +24,4 @@ public class EmpAuto {
     public EmpAuto() {
     }
 
-    public long getId() {
-        return id;
-    }
 }

@@ -25,17 +25,17 @@ public class SpringJpaAppApplication {
 		SpringApplication.run(SpringJpaAppApplication.class, args);
 	}
 
-	@Bean
-	CommandLineRunner commandLineRunner(EntityManagerFactory entityManagerFactory) {
-		return args -> {
-			LOGGER.info("Creating the entity manager.");
-			EntityManager entityManager = entityManagerFactory.createEntityManager();
-			Employee employee = new Employee(1);
-			employee.setName("testName");
-			LOGGER.info("Persisting the entity");
-			entityManager.persist(employee);
-		};
-	}
+//	@Bean
+//	CommandLineRunner commandLineRunner(EntityManagerFactory entityManagerFactory) {
+//		return args -> {
+//			LOGGER.info("Creating the entity manager.");
+//			EntityManager entityManager = entityManagerFactory.createEntityManager();
+//			Employee employee = new Employee(1);
+//			employee.setName("testName");
+//			LOGGER.info("Persisting the entity");
+//			entityManager.persist(employee);
+//		};
+//	}
 
 	@Bean
 	public javax.validation.Validator localValidatorFactoryBean() {

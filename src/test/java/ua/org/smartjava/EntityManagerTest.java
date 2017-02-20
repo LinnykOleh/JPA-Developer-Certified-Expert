@@ -92,7 +92,7 @@ public class EntityManagerTest extends BaseJpaTest {
     }
 
     @Test
-    @Ignore
+//    @Ignore
     public void testManyToMany() {
         entityManager.getTransaction().begin();
         Employee employee = entityManager.find(Employee.class, 1L);

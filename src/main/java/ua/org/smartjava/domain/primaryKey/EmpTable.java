@@ -1,4 +1,4 @@
-package ua.org.smartjava.primaryKey;
+package ua.org.smartjava.domain.primaryKey;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,9 +14,9 @@ public class EmpTable {
             table = "ID_GEN",
             pkColumnName = "GEN_NAME",
             valueColumnName = "GEN_VAL",
-            pkColumnValue = "Add_Gen",
-            initialValue = 1000,
-            allocationSize = 1
+            pkColumnValue = "EmpTable_Gen",
+            initialValue = 100,
+            allocationSize = 10
     )
     @Id
     @GeneratedValue(generator = "EmpTableGenerator", strategy = GenerationType.TABLE)

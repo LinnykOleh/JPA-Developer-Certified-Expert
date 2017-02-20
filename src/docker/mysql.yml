@@ -1,0 +1,16 @@
+version: '2'
+services:
+    ddt-mysql:
+        container_name: jpa-certificate
+        image: mysql:5.7.13
+        environment:
+            - MYSQL_USER=toor
+            - MYSQL_ALLOW_EMPTY_PASSWORD=no
+            - MYSQL_ROOT_PASSWORD=toor
+            - MYSQL_PASSWORD=toor
+            - MYSQL_DATABASE=jpa-certificate
+#        volumes:
+#          - ./scripts:/docker-entrypoint-initdb.d
+        ports:
+            - 3306:3306
+        command: mysqld --lower_case_table_names=1 --skip-ssl
