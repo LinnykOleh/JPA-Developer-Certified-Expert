@@ -11,8 +11,8 @@ import java.util.List;
 
 import javax.persistence.TypedQuery;
 
-import ua.org.smartjava.BaseJpaTest;
-import ua.org.smartjava.TestUtils;
+import ua.org.smartjava.base.BaseJpaTest;
+import ua.org.smartjava.base.TestUtils;
 import ua.org.smartjava.domain.primaryKey.EmpAuto;
 import ua.org.smartjava.domain.primaryKey.EmpSequence;
 import ua.org.smartjava.domain.primaryKey.EmpTable;

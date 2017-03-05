@@ -13,7 +13,7 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
-import ua.org.smartjava.BaseJpaTest;
+import ua.org.smartjava.base.BaseJpaTest;
 
 import static org.junit.Assert.*;
 

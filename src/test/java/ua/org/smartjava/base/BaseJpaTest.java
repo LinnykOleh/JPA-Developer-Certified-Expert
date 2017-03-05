@@ -1,4 +1,4 @@
-package ua.org.smartjava;
+package ua.org.smartjava.base;
 
 import org.junit.Before;
 import org.springframework.beans.factory.annotation.Autowired;

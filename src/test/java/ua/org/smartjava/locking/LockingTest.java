@@ -10,9 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.persistence.LockModeType;
 import javax.transaction.Transactional;
 
-import ua.org.smartjava.BaseJpaTest;
-
-import static org.junit.Assert.*;
+import ua.org.smartjava.base.BaseJpaTest;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

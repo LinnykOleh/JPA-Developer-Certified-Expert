@@ -1,7 +1,6 @@
-package ua.org.smartjava;
+package ua.org.smartjava.base;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;

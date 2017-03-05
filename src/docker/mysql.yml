@@ -1,7 +1,7 @@
 version: '2'
 services:
-    ddt-mysql:
-        container_name: jpa-certificate
+    jpa-mysql:
+        container_name: jpa-mysql
         image: mysql:5.7.13
         environment:
             - MYSQL_USER=toor
@@ -12,5 +12,5 @@ services:
 #        volumes:
 #          - ./scripts:/docker-entrypoint-initdb.d
         ports:
-            - 3306:3306
+            - 3307:3306
         command: mysqld --lower_case_table_names=1 --skip-ssl

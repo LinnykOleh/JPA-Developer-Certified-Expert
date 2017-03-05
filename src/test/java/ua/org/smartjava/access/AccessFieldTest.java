@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import ua.org.smartjava.BaseJpaTest;
+import ua.org.smartjava.base.BaseJpaTest;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

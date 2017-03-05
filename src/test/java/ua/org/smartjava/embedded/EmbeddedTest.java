@@ -5,14 +5,11 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import ua.org.smartjava.BaseJpaTest;
+import ua.org.smartjava.base.BaseJpaTest;
 import ua.org.smartjava.collection.EmployeeCollection;
 import ua.org.smartjava.collection.VacationEntry;
 
