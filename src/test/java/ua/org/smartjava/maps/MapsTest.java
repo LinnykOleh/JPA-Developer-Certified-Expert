@@ -1,73 +1,55 @@
 package ua.org.smartjava.maps;
 
-import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import java.time.LocalDate;
-import java.util.Date;
 import java.util.HashMap;
-
-import javax.persistence.EntityManagerFactory;
+import java.util.Map;
 
 import ua.org.smartjava.base.BaseJpaTest;
+import ua.org.smartjava.maps.base.MapBase;
+import ua.org.smartjava.maps.base.PhoneType;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-//@EntityScan(
-//        basePackages = "ua.org.smartjava.maps"
-//)
 public class MapsTest extends BaseJpaTest {
-//    @Autowired
-//    private DirectorRepository directorRepository;
-
-    @After
-    public void clear() {
-//        directorRepository.deleteAll();
-    }
 
     @Test
-    public void testMapStringString() {
+    public void testMapKeyBaseTypes() {
         entityManager.getTransaction().begin();
         HashMap<String, String> phones = new HashMap<>();
         phones.put("work", "1234");
         phones.put("home", "777");
-        Director director = new Director();
-        director.setPhoneNumbers(phones);
-        entityManager.persist(director);
+        MapBase mapBase = MapBase.builder().name("NAME").build();
+        mapBase.setPhoneNumbers(phones);
+        entityManager.persist(mapBase);
         entityManager.getTransaction().commit();
+
+        MapBase mapBase1 = entityManager.find(MapBase.class, mapBase.getId());
+        assertEquals("NAME", mapBase1.getName());
+        Map<String, String> phoneNumbers = mapBase1.getPhoneNumbers();
+        assertEquals("1234", phoneNumbers.get("work"));
+        assertEquals("777", phoneNumbers.get("home"));
     }
 
     @Test
-    public void testMapEnumKey() {
+    public void testMapKeyEnums() {
         entityManager.getTransaction().begin();
         HashMap<PhoneType, String> phones = new HashMap<>();
         phones.put(PhoneType.WORK, "1234");
         phones.put(PhoneType.HOME, "777");
-        phones.put(PhoneType.MOBILE, "097");
-        Deputat director = new Deputat();
-        director.setPhoneNumbers(phones);
-        entityManager.persist(director);
+        MapBase mapBase = MapBase.builder().name("NAME").build();
+        mapBase.setPhones(phones);
+        entityManager.persist(mapBase);
         entityManager.getTransaction().commit();
-    }
-
-    @Test
-    public void testMapTemporalKey() {
-        entityManager.getTransaction().begin();
-
-        HashMap<Date, String> events = new HashMap<>();
-        events.put(new Date(), "1234");
-        events.put(new Date(213123123), "777");
-        events.put(new Date(12), "097");
-        Calendar director = new Calendar();
-        director.setEvents(events);
-        entityManager.persist(director);
-        entityManager.getTransaction().commit();
+        Map<String, Object> properties = entityManager.getProperties();
+        properties.forEach((k, v) -> {
+            System.err.println(k + ":" + v);
+        });
     }
 
 }
