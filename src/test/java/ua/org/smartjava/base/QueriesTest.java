@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.TypedQuery;
 
 import lombok.AllArgsConstructor;
@@ -79,6 +80,39 @@ public class QueriesTest extends BaseJpaTest{
 
         // Then
         assertEquals(NAME, name);
+    }
+
+    @Test
+    public void testJoins() {
+        // Given-When
+        String QUERY = "SELECT e FROM Employee e JOIN e.address a";
+
+        Employee emp = entityManager.createQuery(QUERY, Employee.class)
+                .getSingleResult();
+
+        // Then
+        assertEquals(NAME, emp.getName());
+    }
+
+    @Test
+    public void testInnerJoinNoPhones() {
+        // Given-When
+        String QUERY = "SELECT e FROM Employee e JOIN e.phones p";
+
+        List<Employee> resultList = entityManager.createQuery(QUERY, Employee.class)
+                .getResultList();
+
+        // Then
+        assertEquals(0, resultList.size());
+    }
+
+    @Test(expected = NoResultException.class)
+    public void testException() {
+        // Given-When
+        String QUERY = "SELECT e FROM Employee e JOIN e.phones p";
+
+        Employee singleResult = entityManager.createQuery(QUERY, Employee.class)
+                .getSingleResult();
     }
 
     @Test
