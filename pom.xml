@@ -12,8 +12,9 @@
     <description>Preparation for JPA certification</description>
 
     <modules>
-        <module>jpa</module>
+        <!--<module>jpa</module>-->
         <module>criteria-api</module>
+        <module>convertors</module>
     </modules>
 
 </project>
