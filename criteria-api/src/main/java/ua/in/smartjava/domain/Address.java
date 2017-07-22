@@ -20,5 +20,6 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
     private String street;
+    private String district;
 
 }

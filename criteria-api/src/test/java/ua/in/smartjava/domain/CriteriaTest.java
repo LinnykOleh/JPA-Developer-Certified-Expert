@@ -1,5 +1,6 @@
 package ua.in.smartjava.domain;
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,11 +13,16 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
+import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -33,7 +39,15 @@ public class CriteriaTest {
 
         //Prepare data
         entityManager.getTransaction().begin();
-        entityManager.persist(Address.builder().street("New").build());
+        entityManager.persist(Address.builder().street("New").district("DIS").build());
+        entityManager.getTransaction().commit();
+    }
+
+    @After
+    public void tearDown() {
+        entityManager.getTransaction().begin();
+        Query query = entityManager.createNativeQuery("DELETE FROM Address");
+        query.executeUpdate();
         entityManager.getTransaction().commit();
     }
 
@@ -74,6 +88,121 @@ public class CriteriaTest {
 
         // Then
         Assert.assertEquals(1, resultList.size());
+    }
+
+    @Test
+    public void testCartesian() {
+        // Given
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Address> criteriaQuery = criteriaBuilder.createQuery(Address.class);
+        Root<Address> from = criteriaQuery.from(Address.class);
+        criteriaQuery.from(Address.class);
+        criteriaQuery.select(from);
+
+        // When
+        TypedQuery<Address> query = entityManager.createQuery(criteriaQuery);
+
+        // Then
+        Assert.assertEquals(1, query.getResultList().size());
+    }
+
+    @Test
+    public void testSingleExpression() {
+        // Given
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<String> criteriaQuery = criteriaBuilder.createQuery(String.class);
+        Root<Address> root = criteriaQuery.from(Address.class);
+        criteriaQuery.select(root.get("street"));
+
+        // When
+        TypedQuery<String> query = entityManager.createQuery(criteriaQuery);
+        String result = query.getSingleResult();
+
+        // Then
+        Assert.assertEquals("New", result);
+    }
+
+    @Test
+    public void testMultipleExpressions() {
+        // Given
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> criteriaQuery = criteriaBuilder.createTupleQuery();
+        Root<Address> root = criteriaQuery.from(Address.class);
+        criteriaQuery.where(criteriaBuilder.equal(root.get("street"), "New"));
+        criteriaQuery.select(criteriaBuilder.tuple(root.get("street"), root.get("district")));
+
+        // When
+        TypedQuery<Tuple> query = entityManager.createQuery(criteriaQuery);
+        List<Tuple> resultList = query.getResultList();
+
+        // Then
+        Assert.assertEquals(1, resultList.size());
+        Tuple tuple = resultList.get(0);
+        Assert.assertEquals("New", tuple.get(0));
+        Assert.assertEquals("DIS", tuple.get(1));
+    }
+
+    @Test
+    public void testMultiselect() {
+        // Given
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> criteriaQuery = criteriaBuilder.createTupleQuery();
+        Root<Address> root = criteriaQuery.from(Address.class);
+        criteriaQuery.where(criteriaBuilder.equal(root.get("street"), "New"));
+        criteriaQuery.multiselect(root.get("street"), root.get("district"));
+
+        // When
+        TypedQuery<Tuple> query = entityManager.createQuery(criteriaQuery);
+        List<Tuple> resultList = query.getResultList();
+
+        // Then
+        Assert.assertEquals(1, resultList.size());
+        Tuple tuple = resultList.get(0);
+        Assert.assertEquals("New", tuple.get(0));
+        Assert.assertEquals("DIS", tuple.get(1));
+    }
+
+    @Test
+    public void testArray() {
+        // Given
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
+        Root<Address> root = criteriaQuery.from(Address.class);
+        criteriaQuery.multiselect(root.get("street"), root.get("district"));
+
+        // When
+        TypedQuery<Object[]> query = entityManager.createQuery(criteriaQuery);
+        Object[] singleResult = query.getSingleResult();
+
+        // Then
+        Assert.assertEquals(2, singleResult.length);
+    }
+
+    @Test
+    public void testConstruct() {
+        // Given
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<AddressInfo> criteriaQuery = criteriaBuilder.createQuery(AddressInfo.class);
+        Root<Address> root = criteriaQuery.from(Address.class);
+        criteriaQuery.select(criteriaBuilder.construct(AddressInfo.class, root.get("street"), root.get("district")));
+
+        // When
+        TypedQuery<AddressInfo> query = entityManager.createQuery(criteriaQuery);
+
+        // Then
+        List<AddressInfo> resultList = query.getResultList();
+        Assert.assertEquals(1, resultList.size());
+        AddressInfo addressInfo = resultList.get(0);
+        Assert.assertEquals("DIS",addressInfo.getRegion());
+        Assert.assertEquals("New",addressInfo.getName());
+    }
+
+    @Getter
+    @AllArgsConstructor
+    public static class AddressInfo {
+        private String name;
+        private String region;
+
     }
 
 }
