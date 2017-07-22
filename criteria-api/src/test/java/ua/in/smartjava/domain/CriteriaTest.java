@@ -149,17 +149,16 @@ public class CriteriaTest {
         CriteriaQuery<Tuple> criteriaQuery = criteriaBuilder.createTupleQuery();
         Root<Address> root = criteriaQuery.from(Address.class);
         criteriaQuery.where(criteriaBuilder.equal(root.get("street"), "New"));
-        criteriaQuery.multiselect(root.get("street"), root.get("district"));
+        criteriaQuery.multiselect(root.get("street"), root.get("street"), root.get("district"));
 
         // When
         TypedQuery<Tuple> query = entityManager.createQuery(criteriaQuery);
-        List<Tuple> resultList = query.getResultList();
+        Tuple tuple = query.getSingleResult();
 
         // Then
-        Assert.assertEquals(1, resultList.size());
-        Tuple tuple = resultList.get(0);
         Assert.assertEquals("New", tuple.get(0));
-        Assert.assertEquals("DIS", tuple.get(1));
+        Assert.assertEquals("New", tuple.get(1));
+        Assert.assertEquals("DIS", tuple.get(2));
     }
 
     @Test
