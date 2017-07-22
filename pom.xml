@@ -13,6 +13,7 @@
 
     <modules>
         <!--<module>jpa</module>-->
+        <!--//TODO split jpa module into more modules based on different topics-->
         <module>criteria-api</module>
         <module>convertors</module>
     </modules>
