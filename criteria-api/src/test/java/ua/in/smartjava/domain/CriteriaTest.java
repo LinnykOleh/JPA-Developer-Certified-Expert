@@ -17,15 +17,18 @@ import javax.persistence.Query;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaDelete;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.ParameterExpression;
 import javax.persistence.criteria.Root;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@Slf4j
 public class CriteriaTest {
 
     @Autowired
@@ -106,6 +109,9 @@ public class CriteriaTest {
         Assert.assertEquals(1, query.getResultList().size());
     }
 
+    /**
+     * Hibernate: select address0_.street as col_0_0_ from address address0_
+     */
     @Test
     public void testSingleExpression() {
         // Given
@@ -142,6 +148,10 @@ public class CriteriaTest {
         Assert.assertEquals("DIS", tuple.get(1));
     }
 
+    /**
+     * Hibernate: select address0_.street as col_0_0_, address0_.street as col_1_0_, address0_.district as col_2_0_
+     * from address address0_ where address0_.street=?
+     */
     @Test
     public void testMultiselect() {
         // Given
@@ -177,6 +187,9 @@ public class CriteriaTest {
         Assert.assertEquals(2, singleResult.length);
     }
 
+    /**
+     * Hibernate: select address0_.street as col_0_0_, address0_.district as col_1_0_ from address address0_
+     */
     @Test
     public void testConstruct() {
         // Given
@@ -192,8 +205,8 @@ public class CriteriaTest {
         List<AddressInfo> resultList = query.getResultList();
         Assert.assertEquals(1, resultList.size());
         AddressInfo addressInfo = resultList.get(0);
-        Assert.assertEquals("DIS",addressInfo.getRegion());
-        Assert.assertEquals("New",addressInfo.getName());
+        Assert.assertEquals("DIS", addressInfo.getRegion());
+        Assert.assertEquals("New", addressInfo.getName());
     }
 
     @Getter
@@ -202,6 +215,76 @@ public class CriteriaTest {
         private String name;
         private String region;
 
+    }
+
+    /**
+     * Hibernate: select address0_.id as col_0_0_, address0_.street as col_1_0_, address0_.district as col_2_0_ from
+     * address address0_
+     */
+    @Test
+    public void testAliases() {
+        // Given
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Tuple> tupleQuery = criteriaBuilder.createTupleQuery();
+        Root<Address> root = tupleQuery.from(Address.class);
+        CriteriaQuery<Tuple> criteriaQuery = tupleQuery.multiselect(
+                root.get("id").alias("first"),
+                root.get("street").alias("second"),
+                root.get("district").alias("third"));
+
+        // When
+        TypedQuery<Tuple> query = entityManager.createQuery(criteriaQuery);
+        Tuple singleResult = query.getSingleResult();
+
+        // Then
+        Assert.assertEquals(3, singleResult.toArray().length);
+        log.info(String.valueOf(singleResult.get("first", Long.class)));
+        Assert.assertEquals("New", singleResult.get("second"));
+    }
+
+    /**
+     * Hibernate: insert into address (id, district, street) values (null, ?, ?)
+     */
+    @Test
+    public void testIn() {
+        // Given
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Address> criteriaQuery = criteriaBuilder.createQuery(Address.class);
+        Root<Address> root = criteriaQuery.from(Address.class);
+        criteriaQuery.select(root)
+                .where(
+                        criteriaBuilder.in(root.get("street")).value("New").value("Old")
+//                        root.get("street").in("New", "Old")
+                );
+
+        // When
+        TypedQuery<Address> query = entityManager.createQuery(criteriaQuery);
+        Address singleResult = query.getSingleResult();
+
+        // Then
+        Assert.assertEquals("New", singleResult.getStreet());
+    }
+
+    /**
+     * Hibernate: delete from address where street is not null
+     */
+    @Test
+    public void testCriteriaDelete() {
+        entityManager.getTransaction().begin();
+        // Given
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaDelete<Address> criteriaDelete = criteriaBuilder.createCriteriaDelete(Address.class);
+        Root<Address> root = criteriaDelete.from(Address.class);
+        criteriaDelete.where(criteriaBuilder.isNotNull(root.get("street")));
+
+        // When
+        Query query = entityManager.createQuery(criteriaDelete);
+        int result = query.executeUpdate();
+
+        entityManager.getTransaction().commit();
+
+        // Then
+        Assert.assertEquals(1, result);
     }
 
 }
