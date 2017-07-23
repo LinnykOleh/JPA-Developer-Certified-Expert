@@ -23,7 +23,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @EntityScan(
-        basePackages = "ua.org.smartjava.domain.primaryKey"
+        basePackages = "ua.org.smartjava.singleTable.primaryKey"
         )
 public class PrimaryKeyTest extends BaseJpaTest {
 

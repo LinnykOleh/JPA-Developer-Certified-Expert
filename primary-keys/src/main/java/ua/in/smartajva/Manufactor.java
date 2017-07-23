@@ -1,4 +1,4 @@
-package ua.in.smartajva.domain;
+package ua.in.smartajva;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

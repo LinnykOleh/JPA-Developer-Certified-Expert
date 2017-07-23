@@ -1,4 +1,4 @@
-package ua.in.smartajva.domain;
+package ua.in.smartajva;
 
 import org.junit.Before;
 import org.junit.Test;

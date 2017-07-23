@@ -17,6 +17,7 @@
         <module>criteria-api</module>
         <module>convertors</module>
         <module>primary-keys</module>
+        <module>inheritence</module>
     </modules>
 
 </project>
