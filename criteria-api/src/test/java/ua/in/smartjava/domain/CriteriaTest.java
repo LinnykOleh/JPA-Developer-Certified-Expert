@@ -73,6 +73,24 @@ public class CriteriaTest {
     }
 
     @Test
+    public void testCriteriaUntyped() {
+        // Given
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery criteriaQuery = criteriaBuilder.createQuery();
+        Root root = criteriaQuery.from(Address.class);
+        criteriaQuery.select(root)
+                .where(criteriaBuilder.equal(root.get("street"), "New"));
+
+        // When
+        Query query = entityManager.createQuery(criteriaQuery);
+
+        // Then
+        List<Address> resultList = query.getResultList();
+        Assert.assertEquals(1, resultList.size());
+        Assert.assertEquals("New", resultList.get(0).getStreet());
+    }
+
+    @Test
     public void testDynamicCriteria() {
         // Given
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
