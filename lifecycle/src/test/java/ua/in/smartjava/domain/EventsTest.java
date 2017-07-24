@@ -60,6 +60,29 @@ public class EventsTest {
         entityManager.getTransaction().commit();
     }
 
+    //TODO add test for JPQL
+
+    /**
+     * PrePersist Employee, 0
+     Hibernate: insert into employee (id, district, street) values (null, ?, ?)
+     Listener on {} is invokedBaker Street
+     PostPersist Employee, 1
+     PreRemove Employee, 1
+     Hibernate: delete from employee where id=?
+     PostRemove Employee, 1
+
+     Due to this happens in one TX - we can not rely on Pre- Post update calls should be made.
+     */
+    @Test
+    public void testLifeCycleInOneTx() {
+        entityManager.getTransaction().begin();
+        entityManager.persist(Employee.builder().street("Baker Street").district("London").build());
+        Employee employee = entityManager.find(Employee.class, 1L);
+        employee.setStreet("NONE");
+        entityManager.remove(employee);
+        entityManager.getTransaction().commit();
+    }
+
     /**
      *  PrePersist Employee, 0
      Hibernate: insert into employee (id, district, street) values (null, ?, ?)
@@ -106,6 +129,17 @@ public class EventsTest {
 
         entityManager.getTransaction().begin();
         entityManager.remove(employee);
+        entityManager.getTransaction().commit();
+    }
+
+    /**
+     * LifeCycle event are not triggered due to they are in unmapped super class of CarBroken
+     * @MappedSuperclass or @Entity annotation must be present
+     */
+    @Test
+    public void testUnMappedSuperClass() {
+        entityManager.getTransaction().begin();
+        entityManager.persist(new CarBroken());
         entityManager.getTransaction().commit();
     }
 }
