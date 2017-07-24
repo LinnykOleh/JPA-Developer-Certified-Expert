@@ -17,7 +17,7 @@
         <module>criteria-api</module>
         <module>converters</module>
         <module>primary-keys</module>
-        <module>inheritence</module>
+        <module>inheritance</module>
         <module>lifecycle</module>
         <module>validation</module>
     </modules>
