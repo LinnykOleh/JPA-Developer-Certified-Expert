@@ -60,7 +60,29 @@ public class EventsTest {
         entityManager.getTransaction().commit();
     }
 
-    //TODO add test for JPQL
+    /**
+     * When executing with nativeQuery or Query no lifecycle callback are done
+     */
+    @Test
+    public void testLifeCycleWithJPQL() {
+        //Prepare data
+        entityManager.getTransaction().begin();
+        Query query = entityManager.createNativeQuery("INSERT INTO Employee (id, street, district) VALUES (0, ?, ?)");
+        query.setParameter(1, "Baker Street");
+        query.setParameter(2, "London");
+        query.executeUpdate();
+        entityManager.getTransaction().commit();
+
+        entityManager.getTransaction().begin();
+        Query updateQuery = entityManager.createQuery("update Employee e SET e.street = 'NONE' WHERE e.id = 0");
+        updateQuery.executeUpdate();
+        entityManager.getTransaction().commit();
+
+        entityManager.getTransaction().begin();
+        Query deleteQuery = entityManager.createNativeQuery("DELETE FROM Employee");
+        deleteQuery.executeUpdate();
+        entityManager.getTransaction().commit();
+    }
 
     /**
      * PrePersist Employee, 0
@@ -76,8 +98,9 @@ public class EventsTest {
     @Test
     public void testLifeCycleInOneTx() {
         entityManager.getTransaction().begin();
-        entityManager.persist(Employee.builder().street("Baker Street").district("London").build());
-        Employee employee = entityManager.find(Employee.class, 1L);
+        Employee london = Employee.builder().street("Baker Street").district("London").build();
+        entityManager.persist(london);
+        Employee employee = entityManager.find(Employee.class, london.getId());
         employee.setStreet("NONE");
         entityManager.remove(employee);
         entityManager.getTransaction().commit();
