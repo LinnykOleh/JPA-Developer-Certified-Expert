@@ -1,11 +1,9 @@
 package ua.in.smartjava.domain;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -14,6 +12,7 @@ import java.util.Arrays;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,6 +29,14 @@ public class EventsTest {
     @Before
     public void init() {
         this.entityManager = this.entityManagerFactory.createEntityManager();
+    }
+
+    @After
+    public void tearDown() {
+        entityManager.getTransaction().begin();
+        Query query = entityManager.createQuery("DELETE from Employee e");
+        query.executeUpdate();
+        entityManager.getTransaction().commit();
     }
 
     @Test
@@ -92,7 +99,7 @@ public class EventsTest {
         entityManager.getTransaction().commit();
 
         entityManager.getTransaction().begin();
-        Employee employee = entityManager.find(Employee.class, 1L);
+        Employee employee = entityManager.find(Employee.class, london.getId());
         employee.setStreet("NONE");
         entityManager.persist(employee);
         entityManager.getTransaction().commit();

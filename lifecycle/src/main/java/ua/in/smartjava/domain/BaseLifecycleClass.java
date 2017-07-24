@@ -11,6 +11,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -19,6 +20,7 @@ public abstract class BaseLifecycleClass {
 
     @Id
     @GeneratedValue
+    @Getter
     private long id;
 
     @PrePersist
