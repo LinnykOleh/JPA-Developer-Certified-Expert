@@ -19,6 +19,7 @@
         <module>primary-keys</module>
         <module>inheritence</module>
         <module>lifecycle</module>
+        <module>validation</module>
     </modules>
 
 </project>
