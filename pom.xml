@@ -18,6 +18,7 @@
         <module>convertors</module>
         <module>primary-keys</module>
         <module>inheritence</module>
+        <module>lifecycle</module>
     </modules>
 
 </project>
