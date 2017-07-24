@@ -18,22 +18,36 @@ import javax.persistence.PostUpdate;
 import javax.persistence.PrePersist;
 import javax.persistence.PreRemove;
 import javax.persistence.PreUpdate;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import javax.validation.groups.Default;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import ua.in.smartjava.constraint.Street;
+import ua.in.smartjava.validationGroups.Personal;
+import ua.in.smartjava.validationGroups.StreetGroup;
 
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@EntityListeners({EmployeeCreateListener.class})
-public class Employee extends BaseLifecycleClass{
+public class Employee {
+    @Id
+    @GeneratedValue
+    private long id;
+
+    @NotNull(message = "Street can not be null")
+    @Street(value = "BackerStreet", groups = StreetGroup.class)
     private String street;
+
+    @Size(min = 1 ,max = 2, groups = Personal.class)
     private String district;
+
     @OneToMany(cascade = CascadeType.ALL)
     private List<Cars> cars;
 
