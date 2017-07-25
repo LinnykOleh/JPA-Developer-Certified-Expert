@@ -9,11 +9,14 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.LockModeType;
 import javax.persistence.Query;
+import javax.persistence.RollbackException;
 import javax.transaction.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
@@ -132,6 +135,183 @@ public class LocksTest {
 
         entityManager.refresh(employee);
         Assert.assertEquals(10, employee.getVacationDays());
+    }
+
+    /**
+     *
+     * Make sure that you are reading the values from objects that are not updated in parallel
+     */
+    @Test(expected = RollbackException.class)
+    public void testOptimisticLockFail() throws InterruptedException {
+        entityManager.getTransaction().begin();
+        EmployeeOptimistic employee = EmployeeOptimistic.builder().street(STREET).district(CITY).vacationDays(20)
+                .build();
+        entityManager.persist(employee);
+        entityManager.getTransaction().commit();
+
+        entityManager.getTransaction().begin();
+        employee = entityManager.find(EmployeeOptimistic.class, employee.getId());
+        executeParallelDistrictUpdate(employee);
+        Thread.sleep(2000);
+
+        entityManager.lock(employee, LockModeType.OPTIMISTIC);
+/*        select version from EmployeeOptimistic where id =1
+        the version has changed - fail the TX
+ */
+        entityManager.getTransaction().commit();
+    }
+
+    @Test
+    public void testOptimisticLock() throws InterruptedException {
+        entityManager.getTransaction().begin();
+        EmployeeOptimistic employee = EmployeeOptimistic.builder().street(STREET).district(CITY).vacationDays(20)
+                .build();
+        entityManager.persist(employee);
+        entityManager.getTransaction().commit();
+
+        entityManager.getTransaction().begin();
+        employee = entityManager.find(EmployeeOptimistic.class, employee.getId());
+
+        executeParallelDistrictUpdate(employee);
+
+        entityManager.lock(employee, LockModeType.OPTIMISTIC);
+        entityManager.getTransaction().commit();
+    }
+
+    private void executeParallelDistrictUpdate(EmployeeOptimistic employee) {
+        EntityManager entityManager2 = entityManagerFactory.createEntityManager();
+        new Thread(() -> {
+            entityManager2.getTransaction().begin();
+            EmployeeOptimistic loadedEmployee = entityManager2.find(EmployeeOptimistic.class, employee.getId());
+            loadedEmployee.setDistrict("NONE");
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            entityManager2.getTransaction().commit();
+        }).start();
+    }
+
+    @Test
+    public void testOptimisticForceIncrementLock() throws InterruptedException {
+        entityManager.getTransaction().begin();
+        EmployeeOptimistic employee = EmployeeOptimistic.builder().street(STREET).district(CITY).vacationDays(20)
+                .build();
+        entityManager.persist(employee);
+        entityManager.getTransaction().commit();
+
+        entityManager.getTransaction().begin();
+        employee = entityManager.find(EmployeeOptimistic.class, employee.getId());
+        final int primaryVersion = employee.getVersion();
+        entityManager.lock(employee, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+//        Thread.sleep(2000);
+/*
+        Generates query select for update
+2017-07-25T15:34:07.686628Z	  218 Query	update EmployeeOptimistic set version=1 where id=1 and version=0
+2017-07-25T15:34:07.688387Z	  218 Query	commit
+    Neither there was write operation or not OPTIMISTIC_FORCE_INCREMENT updates the Version
+
+    If there was update of the state of Employee entity - them 2 version updates are performed:
+2017-07-25T18:29:56.182831Z	  348 Query	update EmployeeOptimistic set district='DD', street='Baker Street', vacationDays=20, version=1 where id=1 and version=0
+2017-07-25T18:29:56.184905Z	  348 Query	update EmployeeOptimistic set version=2 where id=1 and version=1
+2017-07-25T18:29:56.186091Z	  348 Query	commit
+ */
+        entityManager.getTransaction().commit();
+        Assert.assertTrue(primaryVersion < employee.getVersion());
+    }
+
+    @Test(expected = RollbackException.class)
+    public void testOptimisticForceIncrementLockFail() throws InterruptedException {
+        entityManager.getTransaction().begin();
+        EmployeeOptimistic employee = EmployeeOptimistic.builder().street(STREET).district(CITY).vacationDays(20)
+                .build();
+        entityManager.persist(employee);
+        entityManager.getTransaction().commit();
+
+        entityManager.getTransaction().begin();
+        employee = entityManager.find(EmployeeOptimistic.class, employee.getId());
+        final int primaryVersion = employee.getVersion();
+        entityManager.lock(employee, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+        executeParallelDistrictUpdate(employee);
+        Thread.sleep(2000);
+/*
+        Generates query select for update
+    update EmployeeOptimistic set version=1 where id=1 and version=0
+    2017-07-25T15:32:38.360676Z	  208 Query	rollback
+    because another TX already updated version
+ */
+        entityManager.getTransaction().commit();
+        Assert.assertTrue(primaryVersion < employee.getVersion());
+    }
+
+    /**
+     * PESSIMISTIC_WRITE this is exclusive lock
+     */
+    @Test
+    public void testPessimisticWriteLocking() {
+        entityManager.getTransaction().begin();
+        Employee employee = Employee.builder().street(STREET).district(CITY).vacationDays(20)
+                .build();
+        entityManager.persist(employee);
+        entityManager.getTransaction().commit();
+
+        entityManager.getTransaction().begin();
+        Employee loaded = entityManager.find(Employee.class, employee.getId());
+        entityManager.lock(loaded, LockModeType.PESSIMISTIC_WRITE);
+/*
+        Generates query select for update
+2017-07-25T18:14:03.781911Z	  298 Query	select id from Employee where id =1 for update
+2017-07-25T18:14:03.789566Z	  298 Query	update Employee set district='NONE', street='Baker Street', vacationDays=20 where id=1
+2017-07-25T18:14:03.790893Z	  298 Query	commit
+*/
+        loaded.setDistrict("NONE");
+        entityManager.getTransaction().commit();
+    }
+
+    /**
+     * PESSIMISTIC_READ this is shared lock
+     */
+    @Test
+    public void testPessimisticReadLocking() {
+        entityManager.getTransaction().begin();
+        Employee employee = Employee.builder().street(STREET).district(CITY).vacationDays(20)
+                .build();
+        entityManager.persist(employee);
+        entityManager.getTransaction().commit();
+
+        entityManager.getTransaction().begin();
+        Employee loaded = entityManager.find(Employee.class, employee.getId());
+        entityManager.lock(loaded, LockModeType.PESSIMISTIC_READ);
+/*
+        Generates query select for update
+2017-07-25T18:12:52.144539Z	  288 Query	select id from Employee where id =1 lock in share mode
+2017-07-25T18:12:52.152284Z	  288 Query	update Employee set district='NONE', street='Baker Street', vacationDays=20 where id=1
+2017-07-25T18:12:52.153792Z	  288 Query	commit
+*/
+        loaded.setDistrict("NONE");
+        entityManager.getTransaction().commit();
+    }
+
+    @Test
+    public void testPessimisticForceIncrementLocking() {
+        entityManager.getTransaction().begin();
+        EmployeeOptimistic employee = EmployeeOptimistic.builder().street(STREET).district(CITY).vacationDays(20)
+                .build();
+        entityManager.persist(employee);
+        entityManager.getTransaction().commit();
+
+        entityManager.getTransaction().begin();
+        EmployeeOptimistic loaded = entityManager.find(EmployeeOptimistic.class, employee.getId());
+        entityManager.lock(loaded, LockModeType.PESSIMISTIC_FORCE_INCREMENT);
+/*
+        Generates query select for update
+2017-07-25T18:17:54.478363Z	  338 Query	update EmployeeOptimistic set version=1 where id=1 and version=0
+2017-07-25T18:17:54.491297Z	  338 Query	update EmployeeOptimistic set district='NONE', street='Baker Street', vacationDays=20, version=2 where id=1 and version=1
+2017-07-25T18:17:54.492533Z	  338 Query	commit
+*/
+        loaded.setDistrict("NONE");
+        entityManager.getTransaction().commit();
     }
 
 }
