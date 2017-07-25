@@ -20,6 +20,7 @@
         <module>inheritance</module>
         <module>lifecycle</module>
         <module>validation</module>
+        <module>locks</module>
     </modules>
 
 </project>
