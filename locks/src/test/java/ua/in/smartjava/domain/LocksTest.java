@@ -9,7 +9,6 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
@@ -17,7 +16,6 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 import javax.persistence.Query;
 import javax.persistence.RollbackException;
-import javax.transaction.Transactional;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,7 +41,6 @@ public class LocksTest {
     }
 
     @After
-    @Transactional
     public void tearDown() {
         entityManager.getTransaction().begin();
         Query query = entityManager.createQuery("DELETE from Employee e");
@@ -74,6 +71,13 @@ public class LocksTest {
 
     /**
      * This test shows the problems with concurrent access
+Query	select employee0_.id as id1_1_0_, employee0_.district as district2_1_0_, employee0_.street as street3_1_0_, employee0_.vacationDays as vacation4_1_0_ from Employee employee0_ where employee0_.id=1
+Query	select employee0_.id as id1_1_0_, employee0_.district as district2_1_0_, employee0_.street as street3_1_0_, employee0_.vacationDays as vacation4_1_0_ from Employee employee0_ where employee0_.id=1
+Query	update Employee set district='London', street='Baker Street', vacationDays=10 where id=1
+Query	commit
+
+Query	update Employee set district='London', street='Baker Street', vacationDays=19 where id=1
+Query	commit
      */
     @Test
     public void testNoConcurrentAccess() throws InterruptedException {
@@ -95,28 +99,13 @@ public class LocksTest {
 
     /**
      * Optimistic Lock work example
+Query	select employeeop0_.id as id1_2_0_, employeeop0_.district as district2_2_0_, employeeop0_.street as street3_2_0_, employeeop0_.vacationDays as vacation4_2_0_, employeeop0_.version as version5_2_0_ from EmployeeOptimistic employeeop0_ where employeeop0_.id=1
+Query	select employeeop0_.id as id1_2_0_, employeeop0_.district as district2_2_0_, employeeop0_.street as street3_2_0_, employeeop0_.vacationDays as vacation4_2_0_, employeeop0_.version as version5_2_0_ from EmployeeOptimistic employeeop0_ where employeeop0_.id=1
+Query	update EmployeeOptimistic set district='London', street='Baker Street', vacationDays=10, version=1 where id=1 and version=0
+Query	commit
 
-     First Manager:
-     update employee_optimistic set district=?, street=?, vacation_days=?, version=? where id=? and version=?
-     binding parameter [1] as [VARCHAR] - [London]
-     binding parameter [2] as [VARCHAR] - [Baker Street]
-     binding parameter [3] as [INTEGER] - [10]
-     binding parameter [4] as [INTEGER] - [1]
-     binding parameter [5] as [INTEGER] - [1]
-     binding parameter [6] as [INTEGER] - [0]
-     update ... set version=1 where ... version=0
-
-     Second Manager:
-     update employee_optimistic set district=?, street=?, vacation_days=?, version=? where id=? and version=?
-     binding parameter [1] as [VARCHAR] - [London]
-     binding parameter [2] as [VARCHAR] - [Baker Street]
-     binding parameter [3] as [INTEGER] - [19]
-     binding parameter [4] as [INTEGER] - [1]
-     binding parameter [5] as [INTEGER] - [1]
-     binding parameter [6] as [INTEGER] - [0]
-     update ... set version=1 where ... version=0 => no
-     JDBC transaction marked for rollback-only
-
+Query	update EmployeeOptimistic set district='London', street='Baker Street', vacationDays=19, version=1 where id=1 and version=0
+Query	rollback
      */
     @Test
     public void testConcurrentAccessVersion() throws InterruptedException {
