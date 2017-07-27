@@ -21,6 +21,7 @@
         <module>lifecycle</module>
         <module>validation</module>
         <module>locks</module>
+        <module>caching</module>
     </modules>
 
 </project>
