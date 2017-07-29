@@ -14,6 +14,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 import javax.persistence.RollbackException;
 
@@ -30,7 +31,7 @@ public class LocksTest {
     @Rule
     public ExpectedException exception = ExpectedException.none();
 
-    @Autowired
+    @PersistenceUnit
     private EntityManagerFactory entityManagerFactory;
 
     private EntityManager entityManager;
