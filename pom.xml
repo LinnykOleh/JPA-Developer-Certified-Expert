@@ -23,6 +23,7 @@
         <module>locks</module>
         <module>caching</module>
         <module>access-embedded</module>
+        <module>collection</module>
     </modules>
 
 </project>
