@@ -37,7 +37,7 @@ public class Employee {
 
     private String name;
 
-    // integer in DB Boolean in entity
+    // integer in DB Boolean in entity_attr
     @Convert(converter = BooleanToIntegerConverter.class)
     private Boolean topSkilled;
 

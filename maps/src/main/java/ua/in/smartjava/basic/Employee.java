@@ -10,8 +10,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.MapKeyColumn;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * create table Employee (
@@ -22,6 +24,8 @@ import lombok.Data;
 @Entity
 @Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Employee {
 
     @Id

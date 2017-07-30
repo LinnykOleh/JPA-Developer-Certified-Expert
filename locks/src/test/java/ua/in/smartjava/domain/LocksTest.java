@@ -202,7 +202,7 @@ Query	rollback
 2017-07-25T15:34:07.688387Z	  218 Query	commit
     Neither there was write operation or not OPTIMISTIC_FORCE_INCREMENT updates the Version
 
-    If there was update of the state of Employee entity - them 2 version updates are performed:
+    If there was update of the state of Employee entity_attr - them 2 version updates are performed:
 2017-07-25T18:29:56.182831Z	  348 Query	update EmployeeOptimistic set district='DD', street='Baker Street', vacationDays=20, version=1 where id=1 and version=0
 2017-07-25T18:29:56.184905Z	  348 Query	update EmployeeOptimistic set version=2 where id=1 and version=1
 2017-07-25T18:29:56.186091Z	  348 Query	commit

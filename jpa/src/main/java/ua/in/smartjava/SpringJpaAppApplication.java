@@ -22,11 +22,11 @@ public class SpringJpaAppApplication {
 //	@Bean
 //	CommandLineRunner commandLineRunner(EntityManagerFactory entityManagerFactory) {
 //		return args -> {
-//			LOGGER.info("Creating the entity manager.");
+//			LOGGER.info("Creating the entity_attr manager.");
 //			EntityManager entityManager = entityManagerFactory.createEntityManager();
 //			Employee employee = new Employee(1);
 //			employee.setName("testName");
-//			LOGGER.info("Persisting the entity");
+//			LOGGER.info("Persisting the entity_attr");
 //			entityManager.persist(employee);
 //		};
 //	}

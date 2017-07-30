@@ -1,5 +1,6 @@
 package ua.in.smartjava.domain;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,6 +15,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
 import lombok.extern.slf4j.Slf4j;
+import ua.in.smartjava.basic.Clerk;
+import ua.in.smartjava.basic.Department;
 import ua.in.smartjava.basic.Employee;
 import ua.in.smartjava.basic.EmployeeEnum;
 import ua.in.smartjava.basic.PhoneType;
@@ -83,5 +86,39 @@ public class MapTests {
 
         // Then
     }
+
+    /**
+     * insert into Department (name) values ('TOP')
+     * insert into Clerk (department_id, name) values (1, 'Alice')
+     * insert into Clerk (department_id, name) values (1, 'Bob')
+     * update Clerk set clerksByDepartment_KEY='TOP' where id=1
+     * update Clerk set clerksByDepartment_KEY='LOW' where id=2
+     */
+    @Test
+    public void testBasicAndEntity() {
+        // Given
+        Department department = Department.builder().name("TOP")
+                .build();
+        Clerk alice = Clerk.builder().name("Alice").department(department).build();
+        Clerk bob = Clerk.builder().name("Bob").department(department).build();
+
+        Map<String, Clerk> map = new HashMap<>();
+        map.put("TOP", alice);
+        map.put("LOW", bob);
+        department.setClerksByDepartment(map);
+        entityManager.getTransaction().begin();
+        entityManager.persist(department);
+        entityManager.getTransaction().commit();
+
+        // When
+        Department loadedDepartment = entityManager.find(Department.class, department.getId());
+        Clerk top = loadedDepartment.getClerksByDepartment().get("TOP");
+        Clerk low = loadedDepartment.getClerksByDepartment().get("LOW");
+
+        // Then
+        Assert.assertEquals("Alice", top.getName());
+        Assert.assertEquals("Bob", low.getName());
+    }
+
 
 }

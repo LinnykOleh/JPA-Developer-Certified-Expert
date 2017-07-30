@@ -12,8 +12,10 @@ import javax.persistence.Id;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.MapKeyEnumerated;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * create table EmployeeEnum (
@@ -24,6 +26,8 @@ import lombok.Data;
 @Entity
 @Builder
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class EmployeeEnum {
 
     @Id
