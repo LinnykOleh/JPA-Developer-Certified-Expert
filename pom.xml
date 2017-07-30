@@ -22,6 +22,7 @@
         <module>validation</module>
         <module>locks</module>
         <module>caching</module>
+        <module>access</module>
     </modules>
 
 </project>
