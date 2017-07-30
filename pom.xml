@@ -24,6 +24,7 @@
         <module>caching</module>
         <module>access-embedded</module>
         <module>collection</module>
+        <module>maps</module>
     </modules>
 
 </project>

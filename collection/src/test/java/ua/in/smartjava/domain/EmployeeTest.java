@@ -25,7 +25,7 @@ import ua.in.smartjava.unidirectional.one_to_one.Ticket;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ActiveProfiles("mysql")
+//@ActiveProfiles("mysql")
 public class EmployeeTest {
 
     @Autowired
