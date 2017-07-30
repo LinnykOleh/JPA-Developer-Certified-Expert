@@ -25,6 +25,7 @@
 		<hibernate.version>5.2.3.Final</hibernate.version>
 		<lombok.version>1.16.10</lombok.version>
 		<javax.version>1.1.0.Final</javax.version>
+		<mysql.version>6.0.5</mysql.version>
 	</properties>
 
 	<dependencies>
@@ -43,6 +44,12 @@
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>${mysql.version}</version>
 		</dependency>
 
 		<dependency>

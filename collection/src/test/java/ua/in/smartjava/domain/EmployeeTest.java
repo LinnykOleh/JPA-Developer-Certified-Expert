@@ -5,15 +5,20 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
-
-import java.util.Arrays;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
+import ua.in.smartjava.bidirectional.one_to_one.StudentOneToOne;
+import ua.in.smartjava.bidirectional.one_to_one.TicketOneToOne;
+import ua.in.smartjava.unidirectional.one_to_one.Student;
+import ua.in.smartjava.unidirectional.one_to_one.Ticket;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
+//@ActiveProfiles("mysql")
 public class EmployeeTest {
 
     @Autowired
@@ -27,12 +32,36 @@ public class EmployeeTest {
     }
 
     /**
-     * Hibernate: insert into employee (id, name, bonded, top_skilled) values (null, ?, ?, ?)
-     * Hibernate: insert into employee_secured (employee_id, secured) values (?, ?)
-     * Hibernate: insert into employee_secured (employee_id, secured) values (?, ?)
+     * insert into TicketOneToOne (num) values (13)
+     * insert into StudentOneToOne (name, ticket_id) values ('ST1', 1)
+     * commit
+     *
+     * Table            Table
+     * TicketOneToOne           StudentOneToOne
+     *                  ticket_id FK
+     *
+     *  target           owner
      */
     @Test
-    public void test() {
+    public void testOneToOneUnidirectional() {
+        Ticket ticket = Ticket.builder().num(13).build();
+        Student student = Student.builder().ticket(ticket).name("ST1").build();
+        entityManager.getTransaction().begin();
+        entityManager.persist(student);
+        entityManager.getTransaction().commit();
+    }
+
+    /**
+     * insert into TICKET_1_1_BI (num) values (13)
+     * insert into STUDENT_1_1_BI (name, ticket_id) values ('ST1', 1)
+     */
+    @Test
+    public void testOneToOneBidirectional() {
+        TicketOneToOne ticket = TicketOneToOne.builder().num(13).build();
+        StudentOneToOne student = StudentOneToOne.builder().ticket(ticket).name("ST1").build();
+        entityManager.getTransaction().begin();
+        entityManager.persist(student);
+        entityManager.getTransaction().commit();
     }
 
 }
