@@ -18,14 +18,6 @@ import ua.in.smartjava.collection.VacationEntry;
 public class EmbeddedTest extends BaseJpaTest {
 
     @Test
-    public void testFieldAcces() {
-        entityManager.getTransaction().begin();
-        CompanyEmbedded company = new CompanyEmbedded();
-        entityManager.persist(company);
-        entityManager.getTransaction().commit();
-    }
-
-    @Test
     public void testCollection() {
         entityManager.getTransaction().begin();
         EmployeeCollection empl1 = getEmployeeCollection(5, "John");

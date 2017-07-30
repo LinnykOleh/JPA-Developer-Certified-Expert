@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "Lazy")
+@Table(name = "LazyTable")
 @NoArgsConstructor
 @AllArgsConstructor
 public class LazyClass {
@@ -24,7 +24,6 @@ public class LazyClass {
     private String name;
 
 //  This does not work with hibernate implementation.
-//    TODO check why ?
     @Basic(fetch = FetchType.LAZY)
     @Getter @Setter
     private String position;

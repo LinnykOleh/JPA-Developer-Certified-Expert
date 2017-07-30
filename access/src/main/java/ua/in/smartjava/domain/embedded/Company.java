@@ -1,4 +1,4 @@
-package ua.in.smartjava.embedded;
+package ua.in.smartjava.domain.embedded;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
@@ -7,8 +7,11 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
+import lombok.Builder;
+
 @Entity
-public class CompanyEmbedded {
+@Builder
+public class Company {
     @Id
     private long id;
 
@@ -16,9 +19,8 @@ public class CompanyEmbedded {
 
     @Embedded
     @AttributeOverrides({
-            @AttributeOverride(name = "city", column = @Column(name = "TOWN")),
-            @AttributeOverride(name = "country", column = @Column(name = "PROVANCE"))
-    }
-    )
+                    @AttributeOverride(name = "city", column = @Column(name = "CMP_CITY")),
+                    @AttributeOverride(name = "country", column = @Column(name = "CMP_COUNTRY"))
+            })
     private Address address;
 }
