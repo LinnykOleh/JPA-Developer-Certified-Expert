@@ -6,7 +6,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
@@ -17,11 +16,13 @@ import javax.persistence.Query;
 import lombok.extern.slf4j.Slf4j;
 import ua.in.smartjava.domain.access.FieldAccess;
 import ua.in.smartjava.domain.access.PropertyAccess;
+import ua.in.smartjava.domain.lazy.LazyClass;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
-@ActiveProfiles("mysql")
 public class AccessTest {
 
     @PersistenceUnit
@@ -65,6 +66,29 @@ public class AccessTest {
 
         // When-Then
         Assert.assertEquals("+3801234567890", propertyAccess.getPhoneFromDb());
+    }
+
+    /**
+     * Hibernate does not lazy loads the fields of basic types.
+     * This is just a HINT to provider.
+     */
+    @Test
+    public void testLazy() {
+        // Given
+        entityManager.getTransaction().begin();
+        LazyClass lazyClass = new LazyClass();
+        lazyClass.setName("NAME");
+        lazyClass.setPosition("POSITION");
+        entityManager.persist(lazyClass);
+        entityManager.flush();
+        entityManager.clear();
+        entityManager.getTransaction().commit();
+        // When
+        EntityManager entityManager = entityManagerFactory.createEntityManager();
+        entityManager.getTransaction().begin();
+        lazyClass = entityManager.find(LazyClass.class, lazyClass.getId());
+        assertEquals("NAME", lazyClass.getName());
+        entityManager.getTransaction().commit();
     }
 
 }
