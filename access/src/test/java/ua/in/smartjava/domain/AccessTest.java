@@ -26,7 +26,6 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @Slf4j
-@ActiveProfiles("mysql")
 public class AccessTest {
 
     @PersistenceUnit
