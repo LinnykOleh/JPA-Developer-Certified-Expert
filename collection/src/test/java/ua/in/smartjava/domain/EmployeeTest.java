@@ -8,6 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.Arrays;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
@@ -72,11 +74,32 @@ public class EmployeeTest {
     insert into Employee (DEPT_ID, name) values (2, 'SECOND')
      */
     @Test
-    public void testManyToOne() {
+    public void testManyToOneUnidirectional() {
         // Given
         Department dept = Department.builder().name("DEPT").build();
         Employee first = Employee.builder().name("FIRST").department(dept).build();
         Employee second = Employee.builder().name("SECOND").department(dept).build();
+
+        // When
+        entityManager.getTransaction().begin();
+        entityManager.persist(first);
+        entityManager.persist(second);
+        entityManager.getTransaction().commit();
+        // Then
+    }
+
+    /**
+     * insert into DEP_1_TO_MANY_BI (name) values ('DEPT')
+     * insert into EMP_1_TO_MANY_BI (DEPT_ID, name) values (1, 'FIRST')
+     * insert into EMP_1_TO_MANY_BI (DEPT_ID, name) values (1, 'SECOND')
+     */
+    @Test
+    public void testManyToOneBidirectional() {
+        // Given
+        ua.in.smartjava.bidirectional.one_to_many.Department dept = ua.in.smartjava.bidirectional.one_to_many.Department.builder().name("DEPT").build();
+        ua.in.smartjava.bidirectional.one_to_many.Employee first = ua.in.smartjava.bidirectional.one_to_many.Employee.builder().name("FIRST").department(dept).build();
+        ua.in.smartjava.bidirectional.one_to_many.Employee second = ua.in.smartjava.bidirectional.one_to_many.Employee.builder().name("SECOND").department(dept).build();
+        dept.setEmployees(Arrays.asList(first, second));
 
         // When
         entityManager.getTransaction().begin();
