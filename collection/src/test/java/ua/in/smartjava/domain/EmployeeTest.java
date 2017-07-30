@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 
 import javax.persistence.EntityManager;
@@ -17,6 +18,8 @@ import ua.in.smartjava.bidirectional.one_to_one.StudentOneToOne;
 import ua.in.smartjava.bidirectional.one_to_one.TicketOneToOne;
 import ua.in.smartjava.unidirectional.many_to_one.Department;
 import ua.in.smartjava.unidirectional.many_to_one.Employee;
+import ua.in.smartjava.unidirectional.one_to_many.Car;
+import ua.in.smartjava.unidirectional.one_to_many.Wheel;
 import ua.in.smartjava.unidirectional.one_to_one.Student;
 import ua.in.smartjava.unidirectional.one_to_one.Ticket;
 
@@ -40,7 +43,7 @@ public class EmployeeTest {
      * insert into StudentOneToOne (name, ticket_id) values ('ST1', 1)
      * commit
      *
-     * Table            Table
+     * Room            Room
      * TicketOneToOne           StudentOneToOne
      *                  ticket_id FK
      *
@@ -106,6 +109,29 @@ public class EmployeeTest {
         entityManager.persist(first);
         entityManager.persist(second);
         entityManager.getTransaction().commit();
+        // Then
+    }
+
+    /**
+     * insert into Car (name) values ('bmw')
+     * insert into Wheel values ( )
+     * insert into Wheel values ( )
+     * insert into CAR_WHEEL (CAR_ID, EH_ID) values (2, 3)
+     * insert into CAR_WHEEL (CAR_ID, EH_ID) values (2, 4)
+     */
+    @Test
+    public void testOneToManyUnidirectional() {
+        // Given
+        Wheel left = Wheel.builder().build();
+        Wheel right = Wheel.builder().build();
+
+        Car bmw = Car.builder().name("bmw").wheels(Arrays.asList(left, right)).build();
+
+        // When
+        entityManager.getTransaction().begin();
+        entityManager.persist(bmw);
+        entityManager.getTransaction().commit();
+
         // Then
     }
 
