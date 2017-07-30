@@ -18,6 +18,7 @@ public class Man {
 
     private String color;
 
+//    owning side
     @ManyToMany
     @JoinTable(
             name = "MAN_ROOM",

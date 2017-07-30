@@ -31,6 +31,7 @@ public class Employee {
 
     private String name;
 
+    // Owning side
     @ManyToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "DEPT_ID")
     private Department department;

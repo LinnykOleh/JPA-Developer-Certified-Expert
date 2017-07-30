@@ -1,12 +1,12 @@
 package ua.in.smartjava.bidirectional.one_to_many;
 
-import java.util.Collection;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -36,5 +36,6 @@ public class Department {
     // If you forgot to add mappedBy - then additional JoinTable will be created.
     // We will have 2 unidirectional mapping.
     @OneToMany(mappedBy = "department")
-    private Collection<Employee> employees;
+    @OrderColumn
+    private List<Employee> employees;
 }

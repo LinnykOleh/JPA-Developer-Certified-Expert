@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
  *      id integer not null auto_increment,
  *      name varchar(255),
  *      DEPT_ID integer,
+ *      employees_order integer
  *      primary key (id))
  * alter table EMP_1_TO_MANY_BI add constraint FK7brnrkavpyrh18c9mrebnf5ug foreign key (DEPT_ID) references DEP_1_TO_MANY_BI (id)
  */
