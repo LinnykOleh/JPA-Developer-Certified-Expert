@@ -25,6 +25,7 @@
         <module>access-embedded</module>
         <module>collection</module>
         <module>maps</module>
+        <module>entity-manager</module>
     </modules>
 
 </project>
