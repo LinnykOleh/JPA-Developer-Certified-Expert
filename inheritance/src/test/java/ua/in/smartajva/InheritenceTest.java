@@ -20,7 +20,7 @@ import ua.in.smartajva.tablePerConcreteClass.PartTimerEmployee;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
-@ActiveProfiles("mysql")
+//@ActiveProfiles("mysql")
 public class InheritenceTest {
 
     @Autowired
