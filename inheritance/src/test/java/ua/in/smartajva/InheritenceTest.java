@@ -6,6 +6,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
@@ -19,6 +20,7 @@ import ua.in.smartajva.tablePerConcreteClass.PartTimerEmployee;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@ActiveProfiles("mysql")
 public class InheritenceTest {
 
     @Autowired
@@ -104,6 +106,7 @@ public class InheritenceTest {
     /*
     Per Concrete Class:
 
+//This table is not created if PER_CLASS_EMPLOYEE is abstract
     Hibernate: create table per_class_employee (
         id integer not null,
         name varchar(255),

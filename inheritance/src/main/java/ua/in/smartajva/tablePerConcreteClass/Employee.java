@@ -14,11 +14,10 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "PER_CLASS_EMPLOYEE")
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
-public class Employee {
+public abstract class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE)
     private int id;
