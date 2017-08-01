@@ -53,5 +53,7 @@ public class Worker {
     @ElementCollection
     private Set<String> nickNames;
 
+    @ElementCollection
+    private Set<Activity> activities;
 
 }
