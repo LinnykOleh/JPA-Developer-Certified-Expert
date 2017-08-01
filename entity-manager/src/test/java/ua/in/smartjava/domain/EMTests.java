@@ -1,6 +1,5 @@
 package ua.in.smartjava.domain;
 
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -10,7 +9,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceException;
@@ -45,7 +43,7 @@ public class EMTests {
         entityManager.getTransaction().commit();
     }
 
-//  Persist
+    //  Persist
     @Test
     public void testPersist_new() {
         entityManager.getTransaction().begin();
@@ -104,6 +102,7 @@ public class EMTests {
     @Test
     public void testPersist_detached() {
         //Expect
+//        This is strange too no EntityExistsException is thrown !!!
 //        exception.expect(EntityExistsException.class);
         entityManager.getTransaction().begin();
         // Given
@@ -117,8 +116,6 @@ public class EMTests {
 
     @Test
     public void testPersist_removed() {
-        //Expect
-//        exception.expect(EntityExistsException.class);
         entityManager.getTransaction().begin();
         // Given
         Employee bob = Employee.builder().name("Bob").build();
@@ -131,6 +128,30 @@ public class EMTests {
         entityManager.persist(bob);
 
         Assert.assertTrue(entityManager.contains(bob));
+        // Then
+        entityManager.getTransaction().commit();
+    }
+
+//    Contains
+    @Test
+    public void testContains() {
+        entityManager.getTransaction().begin();
+        // Given
+        Employee bob = Employee.builder().name("Bob").build();
+        // When
+        entityManager.persist(bob);
+        // Then
+        Assert.assertTrue(entityManager.contains(bob));
+        entityManager.getTransaction().commit();
+    }
+
+    @Test
+    public void testContains_notEntity() {
+        exception.expect(IllegalArgumentException.class);
+        entityManager.getTransaction().begin();
+        // Given
+        // When
+        entityManager.persist("NOT_ENTITY");
         // Then
         entityManager.getTransaction().commit();
     }
