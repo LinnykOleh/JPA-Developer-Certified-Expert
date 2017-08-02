@@ -26,6 +26,7 @@
         <module>collection</module>
         <module>maps</module>
         <module>entity-manager</module>
+        <module>brain-storm</module>
     </modules>
 
 </project>
