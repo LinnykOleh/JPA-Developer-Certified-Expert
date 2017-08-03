@@ -1,5 +1,6 @@
 package ua.in.smartjava.domain;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -9,6 +10,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.persistence.PersistenceUnit;
 
 @RunWith(SpringRunner.class)
@@ -39,6 +41,15 @@ public class BrainStormTests {
         entityManager.persist(second);
         entityManager.remove(first);
         entityManager.getTransaction().commit();
+    }
+
+    @Test
+    public void testPersistenceUtils() {
+        Department dept = Department.builder().name("DEPT").build();
+        entityManager.getTransaction().begin();
+        entityManager.persist(dept);
+        entityManager.getTransaction().commit();
+        Assert.assertTrue(Persistence.getPersistenceUtil().isLoaded(dept));
     }
 
 }
