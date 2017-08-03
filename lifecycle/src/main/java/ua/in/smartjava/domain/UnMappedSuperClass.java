@@ -9,6 +9,6 @@ public class UnMappedSuperClass {
 
     @PostPersist
     public void init() {
-        log.info("PostPersist {}", this.getClass().getSimpleName());
+        log.error("PostPersist {}", this.getClass().getSimpleName());
     }
 }

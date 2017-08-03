@@ -165,4 +165,16 @@ public class EventsTest {
         entityManager.persist(new CarBroken());
         entityManager.getTransaction().commit();
     }
+
+    /**
+     * When you override the method the parent call-back does not invoked.
+     * PrePersist CarRepaired CarRepaired
+     */
+    @Test
+    public void testHierarchyEventOverride() {
+        entityManager.getTransaction().begin();
+        CarBroken carRepaired = new CarRepaired();
+        entityManager.persist(carRepaired);
+        entityManager.getTransaction().commit();
+    }
 }
