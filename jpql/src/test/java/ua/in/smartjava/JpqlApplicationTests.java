@@ -11,6 +11,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -186,6 +189,33 @@ public class JpqlApplicationTests {
         // When-Then
         assertEquals(NAME, empMenu.getName());
         assertEquals(new Date(1), empMenu.getEmploymentDate());
+    }
+
+    @Test
+    public void testPagination() {
+        // Given
+
+        generateEmployees(10);
+        List<Employee> resultList = entityManager.createQuery("SELECT e FROM Employee e WHERE e.name LIKE 'generated_%'", Employee.class)
+//                starting from elementID
+                .setFirstResult(2)
+//                elements count
+                .setMaxResults(2)
+                .getResultList();
+
+        // When-Then
+        assertEquals(2, resultList.size());
+        assertEquals("generated_2", resultList.get(0).getName());
+        assertEquals("generated_3", resultList.get(1).getName());
+    }
+
+    private void generateEmployees(int count) {
+        entityManager.getTransaction().begin();
+        IntStream.range(0, count)
+                .mapToObj(i -> Employee.builder().name("generated_" +i).employmentDate(new Date(1)).build())
+                .peek(System.out::println)
+                .forEach(entityManager::persist);
+        entityManager.getTransaction().commit();
     }
 
 }
