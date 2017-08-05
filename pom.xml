@@ -27,6 +27,7 @@
         <module>maps</module>
         <module>entity-manager</module>
         <module>brain-storm</module>
+        <module>jpql</module>
     </modules>
 
 </project>

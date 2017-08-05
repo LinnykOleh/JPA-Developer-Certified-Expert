@@ -1,6 +1,8 @@
 package ua.in.smartjava.domain;
 
 import javax.persistence.Entity;
+import javax.transaction.Transactional;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

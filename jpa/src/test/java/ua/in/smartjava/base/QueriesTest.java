@@ -57,31 +57,7 @@ public class QueriesTest extends BaseJpaTest{
         LOGGER.error(singleResult.toString());
     }
 
-    @Test
-    public void testParamBinding() {
-        // Given-When
-        String QUERY = "SELECT e.name FROM Employee e WHERE e.id = :empId";
 
-        String name = entityManager.createQuery(QUERY, String.class)
-                .setParameter("empId", 1L)
-                .getSingleResult();
-
-        // Then
-        assertEquals(NAME, name);
-    }
-
-    @Test
-    public void testParamBindingNumber() {
-        // Given-When
-        String QUERY = "SELECT e.name FROM Employee e WHERE e.id = ?1";
-
-        String name = entityManager.createQuery(QUERY, String.class)
-                .setParameter(1, 1L)
-                .getSingleResult();
-
-        // Then
-        assertEquals(NAME, name);
-    }
 
     @Test
     public void testJoins() {
