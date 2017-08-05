@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -19,6 +20,7 @@ import javax.persistence.Query;
 import javax.persistence.TemporalType;
 import javax.persistence.TypedQuery;
 
+import ua.in.smartjava.domain.EmpMenu;
 import ua.in.smartjava.domain.Employee;
 
 import static org.junit.Assert.assertEquals;
@@ -159,6 +161,31 @@ public class JpqlApplicationTests {
 
         // When-Then
         assertEquals(NAME, employee.getName());
+    }
+
+    @Test
+    public void testQueryObjectArray() {
+        // Given
+        Object[] object = (Object[]) entityManager.createQuery("select e.name, e.employmentDate from Employee e where e.id = :empId")
+                .setParameter("empId", this.id)
+                .getSingleResult();
+
+        // When-Then
+        assertEquals(NAME, object[0]);
+        assertEquals(new Date(1), object[1]);
+    }
+
+    @Test
+    public void testQueryNewObject() {
+        // Given
+        EmpMenu empMenu = entityManager.createQuery("SELECT new ua.in.smartjava.domain.EmpMenu(e.name, e.employmentDate) from Employee " +
+                "e where e.id = ?1", EmpMenu.class)
+                .setParameter(1, this.id)
+                .getSingleResult();
+
+        // When-Then
+        assertEquals(NAME, empMenu.getName());
+        assertEquals(new Date(1), empMenu.getEmploymentDate());
     }
 
 }
