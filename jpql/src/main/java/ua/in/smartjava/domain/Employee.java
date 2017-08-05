@@ -3,6 +3,8 @@ package ua.in.smartjava.domain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Date;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -25,7 +27,9 @@ import lombok.NoArgsConstructor;
                 query = "SELECT e.name FROM Employee e WHERE e.id = :empId"
         ),
         @NamedQuery(name = "Employee.findEmployeeById",
-                query = "SELECT e FROM Employee e WHERE e.id = :empId")
+                query = "SELECT e FROM Employee e WHERE e.id = :empId"),
+        @NamedQuery(name = "Emloyee.findByDate",
+        query = "SELECT e FROM Employee e WHERE e.employmentDate = :empDate")
 }
 )
 public class Employee {
@@ -61,5 +65,7 @@ public class Employee {
 //    }
 
     private String name;
+
+    private Date employmentDate;
 
 }
