@@ -103,11 +103,5 @@ public class QueriesTest extends BaseJpaTest{
         LOGGER.error(singleResult.toString());
     }
 
-    @Test
-    public void test() {
-        TypedQuery<Employee> query = entityManager.createQuery("SELECT e FROM Employee e", Employee.class);
-        List<Employee> employeeList = query.getResultList();
-        assertEquals(1, employeeList.size());
-    }
 
 }
