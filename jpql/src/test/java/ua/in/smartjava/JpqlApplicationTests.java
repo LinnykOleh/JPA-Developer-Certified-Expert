@@ -6,6 +6,8 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -39,6 +41,7 @@ public class JpqlApplicationTests {
 
         entityManager.getTransaction().begin();
         Employee employee = Employee.builder().name(NAME).build();
+        entityManager.persist(Employee.builder().name("NOISE").build());
         entityManager.persist(employee);
         this.id = employee.getId();
         entityManager.getTransaction().commit();
@@ -69,6 +72,45 @@ public class JpqlApplicationTests {
 
         // Then
         assertEquals(NAME, name);
+    }
+
+    @Test
+    public void testNamedQueryFindId() {
+        // Given
+        String empName = entityManager.createNamedQuery("Employee.findEmployeeNameById", String.class)
+                .setParameter("empId", this.id)
+                .getSingleResult();
+        // When-Then
+        assertEquals(NAME, empName);
+    }
+
+    @Test
+    public void testNamedQueryFindByName() {
+        // Given
+        Employee employee = entityManager.createNamedQuery("Employee.findEmployeeById", Employee.class)
+                .setParameter("empId", this.id)
+                .getSingleResult();
+
+        // When-Then
+        assertEquals(NAME, employee.getName());
+    }
+
+    /**
+     * Dynamic registration of named-query
+     */
+    @Test
+    public void testCreateDynamycNamedQuery() {
+        // Given
+        TypedQuery<Employee> typedQuery = entityManager.createQuery("SELECT e FROM Employee e",
+                Employee.class);
+        entityManagerFactory.addNamedQuery("Test.findAll", typedQuery);
+
+        // When
+        List<Employee> resultList = entityManager.createNamedQuery("Test.findAll")
+                .getResultList();
+
+        // Then
+        assertEquals(2, resultList.size());
     }
 
 }

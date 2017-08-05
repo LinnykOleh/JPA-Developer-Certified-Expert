@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Transient;
 
 import lombok.AllArgsConstructor;
@@ -18,6 +20,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@NamedQueries({
+        @NamedQuery(name = "Employee.findEmployeeNameById",
+                query = "SELECT e.name FROM Employee e WHERE e.id = :empId"
+        ),
+        @NamedQuery(name = "Employee.findEmployeeById",
+                query = "SELECT e FROM Employee e WHERE e.id = :empId")
+}
+)
 public class Employee {
     @Transient
     private static final Logger LOGGER = LoggerFactory.getLogger(Employee.class);
