@@ -40,30 +40,6 @@ public class Employee {
     @GeneratedValue
     private long id;
 
-//    @OneToOne(cascade = CascadeType.ALL)
-//    @JoinColumn(name = "addressID")
-//    private Address address;
-
-//    public Address getAddress() {
-//        return address;
-//    }
-
-//    public void setAddress(Address address) {
-//        this.address = address;
-//    }
-
-//    @OneToMany
-//    @JoinColumn(name = "phoneID")
-//    Collection<Phone> phones;
-
-//    public Collection<Phone> getPhones() {
-//        return phones;
-//    }
-
-//    public void setPhones(Collection<Phone> phones) {
-//        this.phones = phones;
-//    }
-
     private String name;
 
     private Date employmentDate;
