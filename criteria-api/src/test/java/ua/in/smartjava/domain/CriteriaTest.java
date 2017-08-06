@@ -13,6 +13,7 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
 import javax.persistence.Query;
 import javax.persistence.Tuple;
 import javax.persistence.TypedQuery;
@@ -31,7 +32,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CriteriaTest {
 
-    @Autowired
+    private static final String NEW_YORK = "New York";
+
+    @PersistenceUnit
     private EntityManagerFactory entityManagerFactory;
 
     private EntityManager entityManager;
@@ -40,17 +43,14 @@ public class CriteriaTest {
     public void init() {
         this.entityManager = this.entityManagerFactory.createEntityManager();
 
-        //Prepare data
-        entityManager.getTransaction().begin();
-        entityManager.persist(Address.builder().street("New").district("DIS").build());
-        entityManager.getTransaction().commit();
-    }
-
-    @After
-    public void tearDown() {
         entityManager.getTransaction().begin();
         Query query = entityManager.createNativeQuery("DELETE FROM Address");
         query.executeUpdate();
+        entityManager.getTransaction().commit();
+
+        //Prepare data
+        entityManager.getTransaction().begin();
+        entityManager.persist(Address.builder().street(NEW_YORK).district("DIS").build());
         entityManager.getTransaction().commit();
     }
 
@@ -61,7 +61,7 @@ public class CriteriaTest {
         CriteriaQuery<Address> criteriaQuery = criteriaBuilder.createQuery(Address.class);
         Root<Address> root = criteriaQuery.from(Address.class);
         criteriaQuery.select(root)
-                .where(criteriaBuilder.equal(root.get("street"), "New"));
+                .where(criteriaBuilder.equal(root.get("street"), NEW_YORK));
 
         // When
         TypedQuery<Address> query = entityManager.createQuery(criteriaQuery);
@@ -69,7 +69,7 @@ public class CriteriaTest {
         // Then
         List<Address> resultList = query.getResultList();
         Assert.assertEquals(1, resultList.size());
-        Assert.assertEquals("New", resultList.get(0).getStreet());
+        Assert.assertEquals(NEW_YORK, resultList.get(0).getStreet());
     }
 
     @Test
@@ -79,7 +79,7 @@ public class CriteriaTest {
         CriteriaQuery criteriaQuery = criteriaBuilder.createQuery();
         Root root = criteriaQuery.from(Address.class);
         criteriaQuery.select(root)
-                .where(criteriaBuilder.equal(root.get("street"), "New"));
+                .where(criteriaBuilder.equal(root.get("street"), NEW_YORK));
 
         // When
         Query query = entityManager.createQuery(criteriaQuery);
@@ -87,7 +87,7 @@ public class CriteriaTest {
         // Then
         List<Address> resultList = query.getResultList();
         Assert.assertEquals(1, resultList.size());
-        Assert.assertEquals("New", resultList.get(0).getStreet());
+        Assert.assertEquals(NEW_YORK, resultList.get(0).getStreet());
     }
 
     @Test
@@ -104,7 +104,7 @@ public class CriteriaTest {
 
         // When
         TypedQuery<Address> typedQuery = entityManager.createQuery(criteriaQuery);
-        typedQuery.setParameter("name", "New");
+        typedQuery.setParameter("name", NEW_YORK);
         List<Address> resultList = typedQuery.getResultList();
 
         // Then
@@ -143,7 +143,7 @@ public class CriteriaTest {
         String result = query.getSingleResult();
 
         // Then
-        Assert.assertEquals("New", result);
+        Assert.assertEquals(NEW_YORK, result);
     }
 
     @Test
@@ -152,7 +152,7 @@ public class CriteriaTest {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> criteriaQuery = criteriaBuilder.createTupleQuery();
         Root<Address> root = criteriaQuery.from(Address.class);
-        criteriaQuery.where(criteriaBuilder.equal(root.get("street"), "New"));
+        criteriaQuery.where(criteriaBuilder.equal(root.get("street"), NEW_YORK));
         criteriaQuery.select(criteriaBuilder.tuple(root.get("street"), root.get("district")));
 
         // When
@@ -162,7 +162,7 @@ public class CriteriaTest {
         // Then
         Assert.assertEquals(1, resultList.size());
         Tuple tuple = resultList.get(0);
-        Assert.assertEquals("New", tuple.get(0));
+        Assert.assertEquals(NEW_YORK, tuple.get(0));
         Assert.assertEquals("DIS", tuple.get(1));
     }
 
@@ -176,7 +176,7 @@ public class CriteriaTest {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Tuple> criteriaQuery = criteriaBuilder.createTupleQuery();
         Root<Address> root = criteriaQuery.from(Address.class);
-        criteriaQuery.where(criteriaBuilder.equal(root.get("street"), "New"));
+        criteriaQuery.where(criteriaBuilder.equal(root.get("street"), NEW_YORK));
         criteriaQuery.multiselect(root.get("street"), root.get("street"), root.get("district"));
 
         // When
@@ -184,8 +184,8 @@ public class CriteriaTest {
         Tuple tuple = query.getSingleResult();
 
         // Then
-        Assert.assertEquals("New", tuple.get(0));
-        Assert.assertEquals("New", tuple.get(1));
+        Assert.assertEquals(NEW_YORK, tuple.get(0));
+        Assert.assertEquals(NEW_YORK, tuple.get(1));
         Assert.assertEquals("DIS", tuple.get(2));
     }
 
@@ -224,7 +224,7 @@ public class CriteriaTest {
         Assert.assertEquals(1, resultList.size());
         AddressInfo addressInfo = resultList.get(0);
         Assert.assertEquals("DIS", addressInfo.getRegion());
-        Assert.assertEquals("New", addressInfo.getName());
+        Assert.assertEquals(NEW_YORK, addressInfo.getName());
     }
 
     @Getter
@@ -257,7 +257,7 @@ public class CriteriaTest {
         // Then
         Assert.assertEquals(3, singleResult.toArray().length);
         log.info(String.valueOf(singleResult.get("first", Long.class)));
-        Assert.assertEquals("New", singleResult.get("second"));
+        Assert.assertEquals(NEW_YORK, singleResult.get("second"));
     }
 
     /**
@@ -271,7 +271,7 @@ public class CriteriaTest {
         Root<Address> root = criteriaQuery.from(Address.class);
         criteriaQuery.select(root)
                 .where(
-                        criteriaBuilder.in(root.get("street")).value("New").value("Old")
+                        criteriaBuilder.in(root.get("street")).value(NEW_YORK).value("Old")
 //                        root.get("street").in("New", "Old")
                 );
 
@@ -280,7 +280,7 @@ public class CriteriaTest {
         Address singleResult = query.getSingleResult();
 
         // Then
-        Assert.assertEquals("New", singleResult.getStreet());
+        Assert.assertEquals(NEW_YORK, singleResult.getStreet());
     }
 
     /**
