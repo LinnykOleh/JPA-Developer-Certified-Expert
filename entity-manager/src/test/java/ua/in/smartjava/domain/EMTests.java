@@ -132,6 +132,20 @@ public class EMTests {
         entityManager.getTransaction().commit();
     }
 
+    @Test
+    public void testManagedRemoved() {
+        entityManager.getTransaction().begin();
+        // Given
+        Employee bob = Employee.builder().name("Bob").build();
+        // When
+        entityManager.persist(bob);
+        entityManager.remove(bob);
+        entityManager.getTransaction().commit();
+
+        // Then
+        Assert.assertFalse(entityManager.contains(bob));
+    }
+
 //    Contains
     @Test
     public void testContains() {
