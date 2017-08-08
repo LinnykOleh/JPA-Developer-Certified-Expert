@@ -31,10 +31,15 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 @Builder
 @EntityListeners({EmployeeCreateListener.class})
+@Slf4j
 public class Employee extends BaseLifecycleClass{
     private String street;
     private String district;
     @OneToMany(cascade = CascadeType.ALL)
     private List<Cars> cars;
 
+    @PostPersist
+    public void postPersist() {
+        log.error("Listener on {} is invoked" );
+    }
 }

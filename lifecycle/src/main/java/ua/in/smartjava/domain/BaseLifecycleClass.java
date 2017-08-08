@@ -29,12 +29,12 @@ public abstract class BaseLifecycleClass {
     }
 
     @PostPersist
-    final void postPersist() {
+    void postPersist() {
         log.info("PostPersist {}, {}", this.getClass().getSimpleName(), this.id);
     }
 
     @PreUpdate
-    public void preUpdate() {
+    public final void preUpdate() {
         log.info("PreUpdate {}, {}", this.getClass().getSimpleName(), this.id);
     }
 
